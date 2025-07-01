@@ -1,0 +1,1226 @@
+                                                     Deep Ordinal Regression Network for Monocular Depth Estimation
+                                                              Deep Ordinal Regression Network for Monocular Depth Estimation
+
+                                               Huan Fu1 Mingming            Gong2,3 2,3Chaohui Wang4 4Kayhan Batmanghelich22 Dacheng Tao11
+                                                       Huan   Fu 1
+                                                                     Mingming    Gong      Chaohui Wang Kayhan Batmanghelich Dacheng Tao
+                                                        1
+                                                          UBTECH       Sydney AI Centre, SIT, FEIT, The University of Sydney, Australia
+                                                               1
+                                                                 UBTECH      Sydney  AI Centre, SIT, FEIT, The University of Sydney, Australia
+                                                                 2
+                                                                   Department
+                                                                       2        of Biomedical   Informatics,
+                                                                         Department of Biomedical             University
+                                                                                                    Informatics, UniversityofofPittsburgh
+                                                                                                                                Pittsburgh
+                                                                      3
+                                                                        Department
+                                                                            3        of Philosophy,
+                                                                              Department of          Carnegie
+                                                                                            Philosophy,        Mellon
+                                                                                                        Carnegie  MellonUniversity
+                                                                                                                          University
+                                         4
+                                           Université
+                                                4      Paris-Est,
+                                                  Université       LIGM
+                                                              Paris-Est,    (UMR
+                                                                          LIGM      8049),
+                                                                                 (UMR      CNRS,
+                                                                                        8049),     ENPC,
+                                                                                               CNRS,       ESIEE
+                                                                                                       ENPC,  ESIEEParis,
+                                                                                                                     Paris,UPEM,
+                                                                                                                             UPEM,Marne-la-Vallée,     France
+                                                                                                                                      Marne-la-Vallée, France
+                                                     {hufu6371@uni.,  dacheng.tao@}sydney.edu.au    {mig73, kayhan@}pitt.edu
+                                                                                                               kayhan@}pitt.edu chaohui.wang@u-pem.fr
+arXiv:1806.02446v1 [cs.CV] 6 Jun 2018
+
+
+
+
+                                                           {hufu6371@uni., dacheng.tao@}sydney.edu.au  {mig73,                   chaohui.wang@u-pem.fr
+
+
+
+
+                                                                       Abstract
+                                                                           Abstract
+
+                                                    Monocular
+                                            Monocular             depth estimation,
+                                                         depth estimation,       whichwhichplaysplays     a crucial
+                                                                                                    a crucial    role role
+                                                 in understanding
+                                        in understanding     3D scene 3D geometry,
+                                                                           scene geometry,is an isill-posed
+                                                                                                     an ill-posed
+                                                                                                               prob-prob-
+                                                 lem. Recent
+                                        lem. Recent       methods methods     have gained
+                                                                      have gained                significant
+                                                                                          significant           improve-
+                                                                                                          improve-                             Image                         Ground Truth
+                                                 ment by exploring image-level information and hierarchi-
+                                        ment by exploring image-level information and hierarchi-
+                                                 cal features from deep convolutional neural networks (DC-
+                                        cal features from deep convolutional neural networks (DC-
+                                                 NNs). These methods model depth estimation as a regres-
+                                        NNs). These     methods model depth estimation as a regres-
+                                                 sion problem and train the regression networks by mini-
+                                        sion problem
+                                                 mizing and
+                                                          meantrain   the regression
+                                                                 squared    error, whichnetworks
+                                                                                              suffers from by slow
+                                                                                                               mini-con-
+                                        mizing mean     squared     error,  which      suffers   from
+                                                 vergence and unsatisfactory local solutions. Besides,   slow   con- ex-                       MSE                              DORN
+                                        vergenceisting
+                                                   and depth
+                                                         unsatisfactory
+                                                                estimation networks employ repeated ex-
+                                                                             local   solutions.       Besides,     spatial
+                                        isting depth   estimation
+                                                 pooling   operations,networks
+                                                                         resultingemploy       repeated
+                                                                                      in undesirable         spatial
+                                                                                                         low-resolution      Figure 1: Estimated
+                                                                                                                                Figure 1: Estimated
+                                                                                                                                                  Depth
+                                                                                                                                                    DepthbybyDORN.
+                                                                                                                                                              DORN.MSE:
+                                                                                                                                                                   MSE: Training our net-
+                                                                                                                                                                        Training our net-
+                                        pooling feature
+                                                 operations,
+                                                          maps.resulting
+                                                                  To obtaininhigh-resolution
+                                                                                 undesirable low-resolution
+                                                                                                     depth maps, skip-       workwork
+                                                                                                                                   via via
+                                                                                                                                       MSE MSE  in log
+                                                                                                                                             in log     space,where
+                                                                                                                                                     space,    whereground
+                                                                                                                                                                       groundtruths
+                                                                                                                                                                               truths are
+                                                                                                                                                                                      are continuous
+                                                                                                                                                                                          continuous
+                                        feature maps.    To obtain
+                                                 connections           high-resolution
+                                                                or multi-layer               depth networks
+                                                                                   deconvolution       maps, skip- are re-       depth
+                                                                                                                             depth     values.
+                                                                                                                                   values.     DORN:
+                                                                                                                                            DORN:       The
+                                                                                                                                                      The    proposeddeep
+                                                                                                                                                           proposed     deepordinal
+                                                                                                                                                                              ordinal regression
+                                                                                                                                                                                      regression net-
+                                                                                                                                                                                                 net-
+                                                 quired,                                                                         work.
+                                                                                                                             work.     Depth
+                                                                                                                                   Depth      values
+                                                                                                                                           values in in
+                                                                                                                                                     thethe blackpart
+                                                                                                                                                          black   partare
+                                                                                                                                                                       arenot
+                                                                                                                                                                           notprovided
+                                                                                                                                                                               provided by
+                                                                                                                                                                                         by KITTI.
+                                                                                                                                                                                            KITTI.
+                                        connections    or which   complicates
+                                                           multi-layer             network training
+                                                                          deconvolution        networks   andare
+                                                                                                               consumes
+                                                                                                                  re-
+                                                 much more
+                                        quired, which          computations.
+                                                         complicates      network  To training
+                                                                                       eliminateand  or at  least largely
+                                                                                                         consumes
+                                        much morereduce   these problems,
+                                                      computations.       To we    introduce
+                                                                              eliminate      or aatspacing-increasing
+                                                                                                      least largely
+                                                 discretization
+                                        reduce these    problems,(SID)
+                                                                     we strategy
+                                                                          introduce  to discretize     depth and recast
+                                                                                         a spacing-increasing
+                                                 depth  network    learning    as  an   ordinal   regression    problem.         per, we examine the problem of Monocular Depth Estima-
+                                        discretization (SID) strategy to discretize depth and recast         per, we examine the problem of Monocular Depth Estima-
+                                                 By training the network using an ordinary regression loss,      tion from a single image (abbr. as MDE hereafter).
+                                        depth network learning as an ordinal regression problem.             tion from a single image (abbr. as MDE hereafter).
+                                                 our method achieves much higher accuracy and faster con-            Compared to depth estimation from stereo images or
+                                        By training   the network using an ordinary regression loss,            Compared        to depth
+                                                                                                                 video sequences,            estimation
+                                                                                                                                       in which            from
+                                                                                                                                                  significant      stereo images
+                                                                                                                                                               progresses   have beenor
+                                                 vergence in synch. Furthermore, we adopt a multi-scale
+                                        our method    achieves   muchwhich
+                                                 network structure       higher     accuracy
+                                                                                avoids            and faster
+                                                                                          unnecessary
+                                                                                                             video   sequences,
+                                                                                                                con-pool-           in  which   significant   progresses
+                                                                                                                 made [20, 30, 27, 45], the progress of MDE is slow. MDE is
+                                                                                                           spatial
+                                                                                                                                                                            have  been
+                                        vergenceinginand
+                                                       synch.    Furthermore,        we    adopt    a
+                                                           captures multi-scale information in parallel.     madean [21,
+                                                                                                        multi-scale        31, 28,
+                                                                                                                     ill-posed      46], theaprogress
+                                                                                                                                 problem:      single 2Dofimage
+                                                                                                                                                             MDEmay  is slow.  MDE is
+                                                                                                                                                                          be produced
+                                        network structure
+                                                    The methodwhich    avoids unnecessary
+                                                                    described     in this paper spatial      an ill-posed
+                                                                                                     achievespool-            problem:
+                                                                                                                 from an infinite
+                                                                                                                 state-of-           numbera single  2D image
+                                                                                                                                               of distinct         may To
+                                                                                                                                                           3D scenes.    be overcome
+                                                                                                                                                                             produced
+                                        ing and the-art
+                                                 captures    multi-scale    information      in  parallel.
+                                                          results on four challenging benchmarks, i.e., KITTIfrom   aninherent
+                                                                                                                 this   infiniteambiguity,
+                                                                                                                                  number oftypical
+                                                                                                                                                distinct 3D scenes.
+                                                                                                                                                       methods    resortTo   overcome
+                                                                                                                                                                         to exploiting
+                                            The method     described
+                                                 [17], ScanNet           in this paper
+                                                                  [9], Make3D       [50], andachieves
+                                                                                                  NYU Depth  thisstatistically
+                                                                                                                  inherent ambiguity,
+                                                                                                           state-of-
+                                                                                                                 v2 [42],       meaningfultypical    methods
+                                                                                                                                              monocular    cuesresort    to exploiting
+                                                                                                                                                                  or features, such as
+                                        the-art results
+                                                 and winonthefour1stchallenging
+                                                                      prize in Robustbenchmarks,             statistically
+                                                                                                                 perspective
+                                                                                                        i.e., KITTI
+                                                                                            Vision Challenge        2018.    meaningful
+                                                                                                                                and texturemonocular
+                                                                                                                                              information,cues   or features,
+                                                                                                                                                             object            suchlo-
+                                                                                                                                                                      sizes, object  as
+                                                 Code has
+                                        [18], ScanNet        been
+                                                         [10],      made available
+                                                                Make3D      [51], andat:   NYU    Depth v2 [43],
+                                                                                               https://github.   cations, and
+                                                                                                             perspective     andocclusions    [50, 25, 33, 49,
+                                                                                                                                  texture information,           27].sizes, object lo-
+                                                                                                                                                            object
+                                        and wincom/hufu6371/DORN
+                                                   the 1st prize in Robust      . Vision Challenge 2018.     cations,   and occlusions
+                                                                                                                     Recently,              [51, 26,have
+                                                                                                                                   some works         34, 50,   28].
+                                                                                                                                                            significantly    improved
+                                        Code has been made available at: https://github.                         the MDE performance
+                                                                                                                Recently,       some works   with have
+                                                                                                                                                   the usesignificantly
+                                                                                                                                                            of DCNN-based      models
+                                                                                                                                                                             improved
+                                        com/hufu6371/DORN .                                                  the [39,
+                                                                                                                 MDE   56,performance
+                                                                                                                            47, 10, 29, 32,   34,the
+                                                                                                                                           with   3],use
+                                                                                                                                                      demonstrating
+                                                                                                                                                          of DCNN-based that deep fea-
+                                                                                                                                                                               models
+                                                1. Introduction                                                  tures   are superior   to  handcrafted   features.   These
+                                                                                                             [40, 57, 48, 11, 30, 33, 35, 3], demonstrating that deep fea-    methods
+                                                                                                                 address the MDE problem by learning a DCNN to estimate
+                                                                                                             tures are superior to handcrafted features. These methods
+                                                   Estimating depth from 2D images is a crucial step of          the continuous depth map. Since this problem is a standard
+                                        1. Introduction                                                      address the MDE problem by learning a DCNN to estimate
+                                                scene reconstruction and understanding tasks, such as 3D         regression problem, mean squared error (MSE) in log-space
+                                                object recognition, segmentation, and detection. In this pa- the or
+                                                                                                                 continuous
+                                                                                                                     its variantsdepth   map. Since
+                                                                                                                                   are usually   adoptedthis
+                                                                                                                                                           asproblem     is a standard
+                                                                                                                                                              the loss function.    Al-
+                                           Estimating depth from 2D images is a crucial step of              regression problem, mean squared error (MSE) in log-space
+                                        scene reconstruction and understanding tasks, such as 3D             or its variants are usually adopted as the loss function. Al-
+                                        object recognition, segmentation, and detection. In this pa-         1
+                                                                                                             though    optimizing a regression network can achieve a rea-
+
+
+                                                                                                                       1
+sonable solution, we find that the convergence is rather slow     sides the qualitative and quantitative performance on those
+and the final solution is far from satisfactory.                  benchmarks, we also evaluate multiple basic instantiations
+    In addition, existing depth estimation networks [11, 17,      of the proposed method to analyze the effects of those core
+33, 35, 40, 59] usually apply standard DCNNs designed ini-        factors. Finally, we conclude the whole paper in Sec. 5.
+tially for image classification in a full convolutional manner
+as the feature extractors. In these networks, repeated spa-       2. Related Work
+tial pooling quickly reduce the spatial resolution of feature
+                                                                  Depth Estimation is essential for understanding the 3D
+maps (usually stride of 32), which is undesirable for depth
+                                                                  structure of scenes from 2D images. Early works fo-
+estimation. Though high-resolution depth maps can be ob-
+                                                                  cused on depth estimation from stereo images by devel-
+tained by incorporating higher-resolution feature maps via
+                                                                  oping geometry-based algorithms [52, 14, 13] that rely on
+multi-layer deconvolutional networks [35, 17, 33], multi-
+                                                                  point correspondences between images and triangulation to
+scale networks [40, 11] or skip-connection [59], such a pro-
+                                                                  estimate the depth. In a seminal work [50], Saxena et al.
+cessing would not only require additional computational
+                                                                  learned the depth from monocular cues in 2D images via su-
+and memory costs, but also complicate the network archi-
+                                                                  pervised learning. Since then, a variety of approaches have
+tecture and the training procedure.
+                                                                  been proposed to exploit the monocular cues using hand-
+    In contrast to existing developments for MDE, we pro-         crafted representations [51, 26, 34, 38, 8, 32, 1, 55, 47, 16,
+pose to discretize continuous depth into a number of inter-       22, 61]. Since handcrafted features alone can only cap-
+vals and cast the depth network learning as an ordinal re-        ture local information, probabilistic graphic models such
+gression problem, and present how to involve ordinal re-          as Markov Random Fields (MRFs) are often built based
+gression into a dense prediction task via DCNNs. More             on these features to incorporate long-range and global cues
+specifically, we propose to perform the discretization using      [51, 65, 41]. Another successful way to make use of global
+a spacing-increasing discretization (SID) strategy instead of     cues is the DepthTransfer method [28] which uses GIST
+the uniform discretization (UD) strategy, motivated by the        global scene features [45] to search for candidate images
+fact that the uncertainty in depth prediction increases along     that are “similar” to the input image from a database con-
+with the underlying ground-truth depth, which indicates that      taining RGBD images.
+it would be better to allow a relatively larger error when            Given the success of DCNNs in image understanding,
+predicting a larger depth value to avoid over-strengthened        many depth estimation networks have been proposed in re-
+influence of large depth values on the training process. Af-      cent years [20, 63, 37, 42, 54, 58, 48, 40, 29]. Thanks
+ter obtaining the discrete depth values, we train the network     to multi-level contextual and structural information from
+by an ordinal regression loss, which takes into account the       powerful very deep networks (e.g., VGG [56] and ResNet
+ordering of discrete depth values.                                [24]), depth estimation has been boosted to a new accuracy
+    To ease network training and save computational cost,         level [11, 17, 33, 35, 59]. The main hurdle is that the re-
+we introduce a network architecture which avoids unnec-           peated pooling operations in these deep feature extractors
+essary subsampling and captures multi-scale information in        quickly decrease the spatial resolution of feature maps (usu-
+a simpler way instead of skip-connections. Inspired by re-        ally stride 32). Eigen et al. [12, 11] applied multi-scale net-
+cent advances in scene parsing [62, 4, 6, 64], we first re-       works which stage-wisely refine estimated depth map from
+move subsampling in the last few pooling layers and apply         low spatial resolution to high spatial resolution via indepen-
+dilated convolutions to obtain large receptive fields. Then,      dent networks. Xie et al. [59] adopted the skip-connection
+multi-scale information is extracted from the last pooling        strategy to fuse low-spatial resolution depth map in deeper
+layer by applying dilated convolution with multiple dilation      layers with high-spatial resolution depth map in lower lay-
+rates. Finally, we develop a full-image encoder which cap-        ers. More recent works [17, 33, 35] apply multi-layer
+tures image-level information efficiently at a significantly      deconvolutional networks to recover coarse-to-fine depth.
+lower cost of memory than the fully-connected full-image          Rather than solely relying on deep networks, some methods
+encoders [2, 12, 11, 37, 30]. The whole network is trained        incorporate conditional random fields to further improve
+in an end-to-end manner without stage-wise training or it-        the quality of estimated depth maps [57, 40]. To improve
+erative refinement. Experiments on four challenging bench-        efficiency, Roy and Todorovic [48] proposed the Neural
+marks, i.e., KITTI [18], ScanNet [10], Make3D [51, 50] and        Regression Forest method which allows for parallelizable
+NYU Depth v2 [43], demonstrate that the proposed method           training of “shallow” CNNs.
+achieves state-of-the-art results, and outperforms recent al-         Recently, unsupervised or semi-supervised learning is
+gorithms by a significant margin.                                 introduced to learn depth estimation networks [17, 33].
+    The remainder of this paper is organized as follows. Af-      These methods design reconstruction losses to estimate
+ter a brief review of related literatures in Sec. 2, we present   the disparity map by recovering a right view with a left
+in Sec. 3 the proposed method in detail. In Sec. 4, be-           view. Also, some weakly-supervised methods considering
+                                                     Full-image
+                                                                  Conv
+                                                      encoder
+                                                                                                                                       ?∗ > 0B
+                                          #            Conv       Conv                                      >
+                                                                                            =
+                                                                                                                                       ?∗ > 0C
+                        Convs                                     Conv                     Conv
+
+
+                                              ASPP
+         Input                                                    Conv                                                                                            output
+                                                                                                                                        ∗
+                          Dense feature                                  Scene understanding             Ordinal                       ? > 0DEC
+                            extractor                             Conv         modular                 regression
+
+
+
+Figure 2: Illustration of the network architecture. The network consists of a dense feature extractor, multi-scale feature learner (ASPP),
+cross channel information learner (the pure 1 × 1 convolutional branch), a full-image encoder and an ordinal regression optimizer. The
+Conv components here are all with kernel size of 1 × 1. The ASPP module consists of 3 dilated convolutional layers with kernel size of
+3 × 3 and dilated rate of 6, 12 and 18 respectively [6]. The supervised information of our network is discrete depth values output by the
+discretization using the SID strategy. The whole network is optimized by our ordinal regression training loss in an end-to-end fashion.
+
+
+
+pair-wise ranking information were proposed to roughly                      peated combination of max-pooling and striding signifi-
+estimate and compare depth [66, 7].                                         cantly reduces the spatial resolution of the feature maps.
+                                                                            Also, to incorporate multi-scale information and reconstruct
+Ordinal Regression [25, 23] aims to learn a rule to predict                 high-resolution depth maps, some partial remedies, includ-
+labels from an ordinal scale. Most literatures modify well-                 ing stage-wise refinement [12, 11], skip connection [59]
+studied classification algorithms to address ordinal regres-                and multi-layer deconvolution network [17, 33, 35] can be
+sion algorithms. For example, Shashua and Levin [53] han-                   adopted, which nevertheless not only requires additional
+dled multiple thresholds by developing a new SVM. Cam-                      computational and memory cost, but also complicates the
+mer and Singer [9] generalized the online perceptron al-                    network architecture and the training procedure. Following
+gorithms with multiple thresholds to do ordinal regression.                 some recent scene parsing network [62, 4, 6, 64], we advo-
+Another way is to formulate ordinal regression as a set of                  cate removing the last few downsampling operators of DC-
+binary classification subproblems. For instance, Frank and                  NNs and inserting holes to filters in the subsequent conv
+Hall [15] applied some decision trees as binary classifiers                 layers, called dilated convolution, to enlarge the field-of-
+for ordinal regression. In computer vision, ordinal regres-                 view of filters without decreasing spatial resolution or in-
+sion has been combined with DCNNs to address the age                        creasing number of parameters.
+estimation problem [44].
+                                                                            3.1.2      Scene Understanding Modular
+3. Method
+    This section first introduces the architecture of our deep                                          # (&×ℎ×))                                    ℱ (&×ℎ×,)
+
+ordinal regression network; then presents the SID strategy                                                                    -             -
+
+to divide continuous depth values into discrete values; and                                                          !"           !"            !"
+
+
+finally details how the network parameters can be learned
+in the ordinal regression framework.
+                                                                               # (&×ℎ×))                                                                                   ℱ (&×ℎ×,)
+                                                                                           .//0123   # ; ((&/4)×(ℎ/4)×))
+3.1. Network Architecture                                                                   (4×4)
+                                                                                                                                        456250 7185:
+                                                                                                                                           1×1
+                                                                                                                          ,   1×1×,                       1×1×,
+                                                                                                                !"
+                                                                                                                                                                    COPY
+
+
+
+
+   As shown in Fig. 2, the divised network consists of two                                                                                  CONV
+
+
+parts, i.e., a dense feature extractor and a scene understand-
+ing modular, and outputs multi-channel dense ordinal labels
+given an image.                                                             Figure 3: Full-Image Encoders. Top: the full-image encoder
+                                                                            implemented by pure f c layers [12, 11, 2] (δ < 1.25: 0.910);
+                                                                            Bottom: Our proposed encoder (δ < 1.25: 0.915).
+3.1.1   Dense Feature Extractor
+Previous depth estimation networks [11, 17, 33, 35, 40, 59]
+usually apply standard DCNNs originally designed for im-                       The scene understanding modular consists of three par-
+age recognition as the feature extractor. However, the re-                  allel components, i.e., an atrous spatial pyramid pooling
+(ASPP) module [5, 6], a cross-channel leaner, and a full-         larger, the information for depth estimation is less rich,
+image encoder. ASPP is employed to extract features from          meaning that the estimation error of larger depth values is
+multiple large receptive fields via dilated convolutional op-     generally larger. Hence, using the UD strategy would in-
+erations. The dilation rates are 6, 12 and 18, respectively.      duce an over-strengthened loss for the large depth values.
+The pure 1 × 1 convolutional branch can learn complex             To this end, we propose to perform the discretization using
+cross-channel interactions. The full-image encoder captures       the SID strategy (as shown in Fig. 4), which uniformed dis-
+global contextual information and can greatly clarify local       cretizes a given depth interval in log space to down-weight
+confusions in depth estimation [57, 12, 11, 2].                   the training losses in regions with large depth values, so that
+    Though previous methods have incorporated full-image          our depth estimation network is capable to more accurately
+encoders, our full-image encoder contains fewer parame-           predict relatively small and medium depth and to rationally
+ters. As shown in Fig. 3, to obtain global feature F with         estimate large depth values. Assuming that a depth interval
+dimension C × h × w from F with dimension C × h × w,              [α, β] needs to be discretized into K sub-intervals, UD and
+a common fc-fashion method accomplishes this by using             SID can be formulated as:
+fully-connected layers, where each element in F connects
+to all the image features, implying a global understanding                      UD:     ti = α + (β − α) ∗ i/K,
+                                                                                                                                (1)
+of the entire image. However, this method contains a pro-                       SID:    ti = elog(α)+
+                                                                                                           log(β/α)∗i
+                                                                                                               K        ,
+hibitively large number of parameters, which is difficult to
+train and is memory consuming. In contrast, we first make         where ti ∈ {t0 , t1 , ..., tK } are discretization thresholds. In
+use of an average pooling layer with a small kernel size and      our paper, we add a shift ξ to both α and β to obtain α∗ and
+stride to reduce the spatial dimensions, followed by a f c        β ∗ so that α∗ = α + ξ = 1.0, and apply SID on [α∗ , β ∗ ].
+layer to obtain a feature vector with dimension C. Then,
+we treat the feature vector as C channels of feature maps         3.3. Learning and Inference
+with spatial dimensions of 1 × 1, and add a conv layer with
+                                                                     After obtaining the discrete depth values, it is straightfor-
+the kernel size of 1 × 1 as a cross-channel parametric pool-
+                                                                  ward to turn the standard regression problem into a multi-
+ing structure. Finally, we copy the feature vector to F along
+                                                                  class classification problem, and adopts softmax regression
+spatial dimensions so that each location of F share the same
+                                                                  loss to learn the parameters in our depth estimation net-
+understanding of the entire image.
+                                                                  work. However, typical multi-class classification losses ig-
+    The obtained features from the aforementioned compo-
+                                                                  nore the ordered information between the discrete labels,
+nents are concatenated to achieve a comprehensive under-
+                                                                  while depth values have a strong ordinal correlation since
+standing of the input image. Also, we add two additional
+                                                                  they form a well-ordered set. Thus, we cast the depth es-
+convolutional layers with the kernel size of 1 × 1, where the
+                                                                  timation problem as an ordinal regression problem and de-
+former one reduces the feature dimension and learns com-
+                                                                  velop an ordinal loss to learn our network parameters.
+plex cross-channel interactions, and the later one transforms
+                                                                     Let χ = ϕ(I, Φ) denote the feature maps of size W ×
+the features into multi-channel dense ordinal labels.
+                                                                  H ×C given an image I, where Φ is the parameters involved
+3.2. Spacing-Increasing Discretization                            in the dense feature extractor and the scene understanding
+                                                                  modular. Y = ψ(χ, Θ) of size W × H × 2K denotes
+                                                                  the ordinal outputs for each spatial locations, where Θ =
+    F                                                    G        (θ0 , θ1 , ..., θ2K−1 ) contains weight vectors. And l(w,h) ∈
+                                                                  {0, 1, ..., K − 1} is the discrete label produced by SID at
+                                                                  spatial location (w, h). Our ordinal loss L(χ, Θ) is defined
+    HB         HC        HL         HK        HJ         HI       as the average of pixelwise ordinal loss Ψ(h, w, χ, Θ) over
+                                                                  the entire image domain:
+                                                                                                  W −1 H−1
+                                                                                               1 X X
+    HB   HC     HL       HK          HJ                  HI                   L(χ, Θ) = −            Ψ(w, h, χ, Θ),
+                                                                                               N w=0
+                                                                                                          h=0
+Figure 4: Discrete Intervals. Illustration of UD (middle) and                              l(w,h)−1
+SID (bottom) to discretize depth interval [α, β] into five sub-
+                                                                                               X
+                                                                                                           k
+                                                                        Ψ(h, w, χ, Θ) =               log(P(w,h) )
+intervals. See Eq. 1 for details.                                                                                               (2)
+                                                                                               k=0
+                                                                                                K−1
+                                                                                                X
+                                                                                                                    k
+   To quantize a depth interval [α, β] into a set of repre-                                +              (log(1 − P(w,h) )),
+                                                                                               k=l(w,h)
+sentative discrete values, a common way is the uniform
+discretization (UD). However, as the depth value becomes                         k
+                                                                                P(w,h) = P (ˆl(w,h) > k|χ, Θ),
+               Image                       Ground Truth                     Eigen [11]                      LRC [18]                          DORN
+
+   Figure
+Figure   5:5:Depth
+               DepthPrediction
+                       Predictionon onKITTI.
+                                       KITTI.Image,
+                                               Image, ground
+                                                      ground truth,
+                                                              truth, Eigen [11],
+                                                                           [12], LRC
+                                                                                 LRC[18],
+                                                                                     [19],and
+                                                                                           andour
+                                                                                               ourDORN.
+                                                                                                   DORN.Ground
+                                                                                                         Groundtruth hashas
+                                                                                                                 truth   been interpolated
+                                                                                                                            been interpolated
+forfor visualization.Pixels
+    visualization.     Pixelswith
+                              withdistance
+                                   distance>>80m
+                                              80mininLRC
+                                                      LRC are
+                                                           are masked out.
+                                                                        out.
+
+
+
+  whereNN==WW×⇥H,
+where                     andˆ
+                      H,and      ˆl(w,h) is the estimated discrete
+                              l(w,h)    is the estimated discrete                   4.
+                                                                                    4. Experiments
+                                                                                       Experiments
+  value decoding  from y
+value decoding from y(w,h)     .
+                             . We
+                         (w,h)     Wechoose
+                                       choosesoftmax
+                                               softmax function
+                                                       function to
+                                                                to
+                                                                                        To
+                                                                                        To demonstrate
+                                                                                            demonstratethe     theeffectiveness
+                                                                                                                     effectivenessofofour     depth
+                                                                                                                                            our  depthestimator,
+                                                                                                                                                         estimator,
+  compute
+compute  PPk (w,h) from y(w,h,2k) and y(w,h,2k+1) as follows:
+             k
+                 from y              and y            as follows:
+              (w,h)           (w,h,2k)          (w,h,2k+1)                          we present a number of experiments examining different
+                                                                                    we present a number of experiments examining different
+                                     ey(w,h,2k+1)                                   aspects of our approach. After introducing the implemen-
+                                   ey(w,h,2k+1)                                     aspects of our approach. After introducing the implemen-
+                 P  k
+                  k (w,h) = y(w,h,2k)                      ,             (3)        tation details, we evaluate our methods on three challeng-
+               P(w,h) = ye(w,h,2k) + eyy(w,h,2k+1)
+                                              (w,h,2k+1) ,               (3)        tation details, we evaluate our methods on three challeng-
+                            e          +e                                           ing outdoor datasets, i.e. KITTI [17], Make3D [49, 50] and
+                                                                                    ing outdoor datasets, i.e. KITTI [18], Make3D [50, 51] and
+  where y(w,h,i) = T✓iT x(w,h) , and x(w,h) 2 . Minimizing                          NYU Depth v2 [42]. The evaluation metrics are following
+where                             , and xfarther             Minimizing             NYU
+                                                                                    previousDepth
+                                                                                                works  v2[11,
+                                                                                                           [43].39].TheSome
+                                                                                                                          evaluation
+                                                                                                                                 ablationmetrics
+                                                                                                                                             studiesarebased
+                                                                                                                                                         following
+                                                                                                                                                                on
+  L( ,y⇥)   ensures
+         (w,h,i)   = θthat
+                         i x(w,h)
+                             predictions   (w,h) ∈     χ. the
+                                                    from       true label
+  incur a greater penalty than those closer to the truetrue
+L(χ,  Θ)  ensures     that predictions   farther   from   the          label
+                                                                  label.            KITTI are discussed to give a more detailed analysisbased
+                                                                                    previous     works     [12,   40].    Some     ablation     studies    of our on
+incurThe
+      a greater    penalty   than those   closer  to  the  true  label.             KITTI are discussed to give a more detailed analysis of our
+                                                                                    method.
+          minimization of L( , ⇥) can be done via an iterative
+   The minimization        of L(χ,  Θ) can   be done                                method.
+                                                                                    Implementation          Details We implement our depth estima-
+  optimization     algorithm.   Taking   derivate   withviarespect
+                                                             an iterative
+                                                                      to ✓i ,
+optimization    algorithm.     Taking
+  the gradient takes the following form:derivate    with  respect     to θi ,       Implementation
+                                                                                    tion  network basedDetails  on theWe       implement
+                                                                                                                           public              our depth
+                                                                                                                                    deep learning            estima-
+                                                                                                                                                       platform
+the gradient takes the following form:                                              tion network
+                                                                                    Caffe  [26]. Thebased        on strategy
+                                                                                                          learning     the public     deepa learning
+                                                                                                                                  applies      polynomial  platform
+                                                                                                                                                               de-
+           @L( , ⇥)
+                                  W 1H 1
+                                1 X X @ (w, h, , ⇥)
+                                                                                    Caffe
+                                                                                    cay     [27].
+                                                                                         with   a baseThe   learning
+                                                                                                        learning     ratestrategy
+                                                                                                                           of 0.0001applies
+                                                                                                                                        and thea polynomial
+                                                                                                                                                  power of 0.9.de-
+                          =      W −1 H−1                           ,               cay with a base
+                                                                                    Momentum         and learning
+                                                                                                          weight decayrate of     set to and
+                                                                                                                             are0.0001          the power
+                                                                                                                                           0.9 and   0.0005ofre-0.9.
+        ∂L(χ,  @✓Θ)i          1N X X ∂Ψ(w,@✓           h,i χ, Θ)
+                        =−         w=0   h=0                        ,               MomentumThe
+                                                                                    spectively.       anditeration
+                                                                                                            weight number
+                                                                                                                      decay are      set to
+                                                                                                                                 is set   to 300K
+                                                                                                                                              0.9 and    KITTI,re-
+                                                                                                                                                     for0.0005
+     @ (w,∂θ  h, i , ⇥)       N@ w=0
+                                   (w, h,             ∂θi                           50K
+                                                                                    spectively. The iteration number is set to 300K forbatch
+                                                                                          for   Make3D,       and   3M    for   NYU    Depth     v2,  and    KITTI,
+                                       h=0 , ⇥)
+                          =                       ,                      (4)
+  ∂Ψ(w,@✓  h,2k+1
+              χ, Θ)           ∂Ψ(w,@✓ h,2kχ, Θ)                                     size
+                                                                                    50Kisfor setMake3D,
+                                                                                                  to 3. Weand    find3M thatfor
+                                                                                                                              further
+                                                                                                                                 NYUincreasing
+                                                                                                                                          Depth v2,the   anditera-
+                                                                                                                                                               batch
+                        =−                      ,                        (4)        tion
+                                                                                    sizenumber
+                                                                                          is set tocan3.only Weslightly
+                                                                                                                   find thatimprove
+                                                                                                                                further theincreasing
+                                                                                                                                             performance. the Weitera-
+     @ ∂θ
+        (w,
+          2k+1h, , ⇥)               ∂θ
+                          = x(w,h) ⌘(l2k
+                                       (w,h) > k)(P(w,h)
+                                                        k
+                                                                   1)               adopt  both VGG-16
+                                                                                    tion number       can only[55]      and ResNet-101
+                                                                                                                   slightly   improve the[23]       as our fea-We
+                                                                                                                                               performance.
+           @✓
+  ∂Ψ(w, h, χ, Θ)
+              2k
+                        = x(w,h) η(l(w,h) > k)(P(w,h)   k
+                                                          k   − 1)                  ture
+                                                                                    adoptextractors,
+                                                                                            both VGG-16  and initialize
+                                                                                                                  [56] andtheir    parameters
+                                                                                                                                ResNet-101         viaas
+                                                                                                                                                 [24]   theourpre-fea-
+        ∂θ2k                + x(w,h) ⌘(l(w,h)  k)P(w,h)        ,                   trained   classification     model on their ILSVRC       [48]. Since      fea-
+                                                              k
+                                                                                    ture extractors,       and initialize             parameters      via the     pre-
+                              +x           η(l          ≤ k)P(w,h)  ,               tures in first
+                                                                                    trained          few layers only
+                                                                                               classification      model  contain   general low-level
+                                                                                                                             on ILSVRC          [49]. Sinceinfor- fea-
+   where k 2 {0, 1, ..., K (w,h)      1}, and (w,h)
+                                                ⌘(·) is an indicator  function
+                                                                                    mation,
+                                                                                    tures in wefirstfixed
+                                                                                                      few the   parameters
+                                                                                                           layers               of conv1
+                                                                                                                     only contain     generaland low-level
+                                                                                                                                                  conv2 blocks infor-
+   such that ⌘(true) = 1 and ⌘(false) = 0. We the can optimize
+where k ∈ {0, 1, ..., K−1}, and η(·) is an indicator function                       in  ResNetweafter
+                                                                                    mation,          fixedinitialization.
+                                                                                                             the parameters    Also,   the batch
+                                                                                                                                  of conv1     and normaliza-
+                                                                                                                                                     conv2 blocks
+   our network via backpropagation.
+such Inthattheη(true)     = 1 and η(false) = 0. We the can optimize                 tion parameters in ResNet are directly initialized and fixed
+                inference phase, after obtaining ordinal labels for                 in ResNet after initialization. Also, the batch normaliza-
+oureach
+     network      via    backpropagation.                                           during training progress. Data augmentation strategies are
+          position of image I, the predicted depth value dˆ(w,h)                    tion parameters in ResNet are directly initialized and fixed
+    In  the  inference      phase, after obtaining ordinal labels for               following [11]. In the test phase, we split each image to
+   is decoded     as:                                                               during training progress. Data augmentation strategies are
+each position of image I, the predicted depth value dˆ(w,h)                         some overlapping windows according the cropping method
+                                                                                    following [12]. In the test phase, we split each image to
+is decoded as: ˆ                   tl̂(w,h) + tl̂(w,h) +1                           in the training phase, and obtain the predicted depth values
+                      d(w,h) =                               ⇠,                     some
+                                                                                    in     overlapping
+                                                                                       overlapped      regionswindows       according
+                                                                                                                  by averaging             the cropping method
+                                                                                                                                    the predictions.
+                                              2                                     in the training phase, and obtain the predicted depth values
+                               tl̂K(w,h)  +  t                             (5)
+                  dˆ(w,h)          X1          l̂(w,h) +1
+                                                          − ξ,                      4.1. Benchmark
+                                                                                    in overlapped             Perfomance
+                                                                                                        regions     by averaging the predictions.
+                      ˆl(w,h)==          ⌘(P  k
+                                            2 (w,h)    >=  0.5).
+                               K−1 k=0                                     (5)      KITTI The KITTI dataset [17] contains outdoor scenes
+                               X                                                    4.1. Benchmark Perfomance
+                   ˆl(w,h) =                 k
+                                        η(P(w,h)     >= 0.5).                       with images of resolution about 375 ⇥ 1241 captured by
+                              k=0                                                   KITTI The KITTI dataset [18] contains outdoor scenes
+                                                                                    with images of resolution about 375 × 1241 captured by
+                            Method          abs rel. imae irmse log mae log rmse mae rmse scale invar. sq. rel.
+                       Official
+                      Method    Baseline     0.25 imae0.17irmse
+                                       abs rel.                0.21 log mae
+                                                                         0.24 log rmse
+                                                                                   0.29 mae0.42 rmse
+                                                                                                  0.53 scale0.05
+                                                                                                             invar. sq.0.14
+                                                                                                                        rel.
+                            DORN
+                  Official Baseline      0.250.14  0.170.10    0.13
+                                                            0.21         0.13
+                                                                      0.24         0.17
+                                                                                0.29       0.22
+                                                                                        0.42 0.53 0.29      0.02
+                                                                                                          0.05         0.06
+                                                                                                                     0.14
+                       DORN              0.14      0.10     0.13      0.13      0.17    0.22 0.29         0.02       0.06
+                             Table 1: Scores on the online ScanNet evaluation server. See https://goo.gl/8keUQN.
+                          Table 1: Scores on the online ScanNet evaluation server. See https://goo.gl/8keUQN.
+            Method         SILog sqErrorRel absErrorRel iRMSE                                  and evaluate our method on the ScanNet online test server.
+        Official
+      Method     Baseline
+                       SILog18.19      7.32 absErrorRel
+                               sqErrorRel          14.24 iRMSE
+                                                             18.50
+             DORN           11.77      2.23         8.78     12.98
+                                                                                            and evaluate our method on the ScanNet online test server.
+  Official Baseline 18.19         7.32         14.24      18.50
+       DORN
+      Table  2: Scores11.77       2.23 KITTI evaluation
+                         on the online          8.78      12.98
+                                                          server. See
+       https://goo.gl/iXuhiN.
+Table 2: Scores on the online KITTI evaluation server. See
+https://goo.gl/iXuhiN.
+      cameras and depth sensors in a driving car. All the 61 scenes
+      from the “city”, “residential”, “road” and “Campus” cate-
+cameras    andare
+      gories      depth
+                      usedsensors
+                             as our in     a driving car.
+                                       training/test    sets.All
+                                                               Wethetest61onscenes
+                                                                               697 im-
+from ages
+       the “city”,
+              from 29 scenes split by Eigen et al. [11], and cate-
+                         “residential”,      “road”     and   “Campus”         train on
+goriesabout
+         are used
+                23488  asimages
+                          our training/test       sets. We 32
+                                    from the remaining         testscenes.
+                                                                      on 697We   im-train
+ages from
+      our model on a random crop of size 385 ⇥ 513. For on
+               29   scenes    split   by   Eigen    et al.  [12],   and    train   some
+aboutother
+        23488     imageswefrom
+                details,        set the remaining        32 scenes.
+                                            maximal ordinal        labelWe  fortrain
+                                                                                 KITTI
+our model
+      as 80, on andaevaluate
+                       randomour    crop    of size
+                                        results   on 385    × 513. For
+                                                      a pre-defined           some
+                                                                          center   crop-
+other ping
+       details,     we set[11]
+             following        thewithmaximal       ordinal
+                                           the depth   ranginglabel
+                                                                  from for0m KITTI
+                                                                                to 80m
+as 80,and
+        and0m      to 50m.
+               evaluate    ourNote     that,ona single
+                                 results                 model iscenter
+                                                 a pre-defined         trained   on the
+                                                                              crop-
+      full depth [12]
+ping following        range,   andthe
+                            with      is depth
+                                          tested ranging
+                                                  on data from
+                                                             with different
+                                                                      0m to 80m   depth
+and 0mranges.
+           to 50m. Note that, a single model is trained on the
+      Make3D
+full depth     range,TheandMake3D
+                               is tested  dataset
+                                             on data[49,with
+                                                           50] different
+                                                                contains depth534 out-
+      door images, 400 for training, and 134 for testing, with the
+ranges.
+Make3Dresolution      of 2272 ⇥
+             The Make3D               1704, [50,
+                                   dataset      and provides
+                                                      51] containsthe ground
+                                                                          534 out-  truth
+door images, 400 for training, and 134 for testing, with the re-
+      depth     map     with   a  small     resolution    of  55   ⇥    305.    We
+      duce the
+resolution     of resolution
+                    2272 × 1704,  of allandimages    to 568the
+                                                provides      ⇥ 426,
+                                                                   groundand train
+                                                                               truthour
+depth map with a small resolution of 55 × 305. We previ-
+      model      on  a random      crop   of size  513⇥385.       Following       re-
+      ous works, we report C1 (depth range from 0m to 80m) and
+duce the resolution of all images to 568 × 426, and train our
+      C2 (depth range from 0m to 70m) error on this dataset us-
+model on a random crop of size 513×385. Following previ-
+      ing three commonly used evaluation metrics [27, 39]. For                                           Image              Ground Truth               DORN
+ous works, we report C1 (depth range from 0m to 80m) and
+      the VGG model, we train our DORN on a depth range of
+C2 (depth      range from 0m to 70m) error on this dataset us-
+      0m to 80m from scratch (ImageNet model), and evaluate                                    Figure
+                                                                                            Figure  6: 6:Depth
+                                                                                                           Depth PredictionononMake3D.
+                                                                                                               Prediction         Make3D.Image,
+                                                                                                                                           Image,ground
+                                                                                                                                                  ground truth,
+                                                                                                                                                          truth,
+ing three
+      results using theused
+             commonly           sameevaluation
+                                         model formetrics
+                                                        C1 and[28, C2 40].       For
+                                                                          . However,        andand
+                                                                                                ourour DORN.
+                                                                                                    DORN.      Pixels
+                                                                                                             Pixels   withdistance
+                                                                                                                    with    distance>>70m  aremasked
+                                                                                                                                       70mare maskedout.
+                                                                                                                                                      out.
+the VGG
+      for ResNet, we learn two separate models for C1 andofC2
+              model,      we  train    our   DORN       on   a  depth     range
+0m torespectively.
+         80m from scratch (ImageNet model), and evaluate
+results
+      NYU using     the same
+                Depth     v2 The  model
+                                     NYUfor   DepthC1 v2and[42]
+                                                              C2 dataset
+                                                                    . However,contains      Performance Tab. 3 and Tab. 4 give the results on two
+for ResNet,       we    learn  two     separate     models     for         and C2
+                                                                    C1Kinect                outdoor    datasets,Tab.
+                                                                                                                   i.e., 3KITTI    and 4Make3D.
+      464 indoor video scenes taken with a Microsoft                               cam-        Performance                 and Tab.        give the It    can be
+                                                                                                                                                      results  onseen
+                                                                                                                                                                    two
+respectively.
+      era. We train our DORN using all images (about 120K)                                  thatoutdoor
+                                                                                                  our DORN        improves    the    accuracy    by 5%     ∼  30%    in
+                                                                                                         datasets, i.e., KITTI and Make3D. It can be seen
+NYUfrom Depth  thev2 249 The   NYU scenes,
+                           training      Depth v2   and[43]
+                                                          testdataset
+                                                                on the contains
+                                                                            694-image       terms   of  all  metrics   compared       with   previous
+                                                                                               that our DORN improves the accuracy by 5% s 30% in        works   in  all
+464 indoor
+      test setvideo      scenes
+                  following        taken with
+                                previous           a Microsoft
+                                              works.    To speedKinect        cam- all
+                                                                     up training,           settings.
+                                                                                               terms ofSome      qualitative
+                                                                                                           all metrics         resultswith
+                                                                                                                          compared       are previous
+                                                                                                                                              shown inworksFig. 5inand
+                                                                                                                                                                     all
+era. the
+      Weimages
+             train our are DORN
+                            reduced using        all imagesof(about
+                                         to the resolution         288 ⇥ 120K)
+                                                                             384 from       Fig.  6. In Tab.
+                                                                                               settings.   Some5, our  DORN results
+                                                                                                                   qualitative   outperforms      otherinmethods
+                                                                                                                                           are shown                 on
+                                                                                                                                                            Fig. 5 and
+from 480
+       the ⇥ 249 640.training
+                         And the  scenes,
+                                     model and       test ononthe
+                                               are trained            694-image
+                                                                  random      crops of      NYUFig.Depth     v2, 5,
+                                                                                                     6. In Tab.   which    is one outperforms
+                                                                                                                     our DORN        of the largest   indoor
+                                                                                                                                                   other       bench-
+                                                                                                                                                           methods   on
+      size
+test set  following
+            257⇥353.         We report
+                          previous          our scores
+                                        works.    To speedon a up
+                                                                pre-defined
+                                                                     training, center
+                                                                                  all       marks.
+                                                                                               NYUThe  Depthresults  suggestis that
+                                                                                                                v2, which       one our   method
+                                                                                                                                      of the  largestis indoor
+                                                                                                                                                         applicable  to
+                                                                                                                                                                bench-
+      cropping
+the images      areby    Eigen [11].
+                     reduced      to the resolution of 288 × 384 from                       both  indoor
+                                                                                               marks.   Theand    outdoor
+                                                                                                              results        data.thatWe
+                                                                                                                       suggest         ourevaluate
+                                                                                                                                            method our     method on
+                                                                                                                                                      is applicable   to
+         640. And
+480 ×ScanNet         The theScanNet
+                              model are    [9]trained
+                                                datasetonis random         crops of
+                                                               also a challenging           theboth
+                                                                                                 online  KITTI
+                                                                                                     indoor    andevaluation
+                                                                                                                    outdoor data.serverWeand    the online
+                                                                                                                                            evaluate         ScanNet
+                                                                                                                                                       our method    on
+size 257×353.
+      benchmarkWe          report
+                        which        our scores
+                                 contains     variouson indoor
+                                                         a pre-defined
+                                                                  scenes. center
+                                                                              We train         the onlineserver.
+                                                                                            evaluation       KITTIAs  evaluation
+                                                                                                                          shown in  server
+                                                                                                                                       Tab.and   the online
+                                                                                                                                             2 and     1, ourScanNet
+                                                                                                                                                               DORN
+      our model
+cropping    by Eigen    on [12].
+                            the officially provided 24353 training and                         evaluation outperforms
+                                                                                            significantly    server. As shown        in Tab. 2provided
+                                                                                                                             the officially      and 1, baselines.
+                                                                                                                                                           our DORN
+      validation
+ScanNet               images with
+             The ScanNet           [10]a dataset
+                                            randomiscrop  alsosize    of 385 ⇥ 513,
+                                                                 a challenging                 significantly outperforms the officially provided baselines.
+                                                                                            4.2. Ablation Studies
+benchmark which contains various indoor scenes. We train
+our model on the officially provided 24353 training and                                         We conduct various ablation studies to analyze the de-
+validation images with a random crop size of 385 × 513,                                     tails of our approach. Results are shown in Tab. 6, Tab. 7,
+                                                      higher is better                        lower is better
+            Method                cap
+                                              δ < 1.25 δ < 1.252 δ < 1.253          Abs Rel Squa Rel RMSE             RMSElog
+        Make3D [51]            0 - 80 m         0.601     0.820        0.926         0.280   3.012      8.734          0.361
+       Eigen et al. [12]       0 - 80 m         0.692     0.899        0.967         0.190   1.515      7.156          0.270
+        Liu et al. [40]        0 - 80 m         0.647     0.882        0.961         0.217   1.841      6.986          0.289
+      LRC (CS + K) [19]        0 - 80 m         0.861     0.949        0.976         0.114   0.898      4.935          0.206
+     Kuznietsov et al. [33]    0 - 80 m         0.862     0.960        0.986         0.113   0.741      4.621          0.189
+        DORN (VGG)             0 - 80 m         0.915     0.980        0.993         0.081   0.376      3.056          0.132
+       DORN (ResNet)           0 - 80 m         0.932     0.984        0.994         0.072   0.307      2.727          0.120
+       Garg et al. [17]        0 - 50 m         0.740     0.904        0.962         0.169   1.080      5.104          0.273
+      LRC (CS + K) [19]        0 - 50 m         0.873     0.954        0.979         0.108   0.657      3.729          0.194
+     Kuznietsov et al. [33]    0 - 50 m         0.875     0.964        0.988         0.108   0.595      3.518          0.179
+        DORN (VGG)             0 - 50 m         0.920     0.982        0.994         0.079   0.324      2.517          0.128
+       DORN (ResNet)           0 - 50 m         0.936     0.985        0.995         0.071   0.268      2.271          0.116
+
+Table 3: Performance on KITTI. All the methods are evaluated on the test split by Eigen et al. [12]. LRC (CS + K): LRC pre-train their
+model on Cityscapes and fine tune on KITTI.
+
+
+                            C1 error          C2 error                       Method               δ1    δ2    δ3    rel log10 rms
+        Method
+                        rel log10 rms     rel log10 rms                   Make3D [51]           0.447 0.745 0.897 0.349 - 1.214
+   Make3D [51]           -     -      -  0.370 0.187 -                  DepthTransfer [28]         -     -     -   0.35 0.131 1.2
+   Liu et al. [39]       -     -      -  0.379 0.148 -                    Liu et al. [41]          -     -     - 0.335 0.127 1.06
+ DepthTransfer [28] 0.355 0.127 9.20 0.361 0.148 15.10                  Ladicky et al. [34]     0.542 0.829 0.941 -       -     -
+   Liu et al. [41]     0.335 0.137 9.49 0.338 0.134 12.60                  Li et al. [36]       0.621 0.886 0.968 0.232 0.094 0.821
+    Li et al. [36]     0.278 0.092 7.12 0.279 0.102 10.27                Wang et al. [57]       0.605 0.890 0.970 0.220 - 0.824
+   Liu et al. [40]     0.287 0.109 7.36 0.287 0.122 14.09                 Roy et al. [48]          -     -     - 0.187 - 0.744
+   Roy et al. [48]       -     -      -  0.260 0.119 12.40                Liu et al. [40]       0.650 0.906 0.976 0.213 0.087 0.759
+  Laina et al. [35]    0.176 0.072 4.46    -     -       -               Eigen et al. [11]      0.769 0.950 0.988 0.158 - 0.641
+ LRC-Deep3D [59] 1.000 2.527 19.11         -     -       -             Chakrabarti et al. [2]   0.806 0.958 0.987 0.149 - 0.620
+     LRC [19]          0.443 0.156 11.513 -      -       -               Laina et al. [35]      0.629 0.889 0.971 0.194 0.083 0.790
+Kuznietsov et al. [33] 0.421 0.190 8.24    -     -       -                 Li et al. [37]       0.789 0.955 0.988 0.152 0.064 0.611
+   MS-CRF [60]         0.184 0.065 4.38 0.198 -        8.56              Laina et al. [35]†     0.811 0.953 0.988 0.127 0.055 0.573
+   DORN (VGG)          0.236 0.082 7.02 0.238 0.087 10.01                 Li et al. [37]†       0.788 0.958 0.991 0.143 0.063 0.635
+  DORN (ResNet)        0.157 0.062 3.97 0.162 0.067 7.32                  MS-CRF [60]†          0.811 0.954 0.987 0.121 0.052 0.586
+                                                                             DORN†              0.828 0.965 0.992 0.115 0.051 0.509
+Table 4: Performance on Make3D. LRC-Deep3D [59] is adopt-
+ing LRC [19] on Deep3D model [59].                                    Table 5: Performance on NYU Depth v2. δi : δ < 1.25i . †:
+                                                                      ResNet based model.
+
+Fig. 1, and Fig. 7, and discussed in detail.
+
+                                                                      conclude that: (i) SID is important and can further improve
+4.2.1   Depth Discretization                                          the performance compared to UD; (i) discretizing depth and
+                                                                      training using a multi-class classification loss is better than
+Depth discretization is critical to performance improve-
+                                                                      training using regression losses; (iii) exploring the ordinal
+ment, because it allows us to apply classification and ordinal
+                                                                      correlation among depth drives depth estimation networks
+regression losses to optimize the network parameters. Ac-
+                                                                      to converge to even better solutions.
+cording to scores in Tab. 6, training by regression on con-
+tinuous depth seems to converge to a poorer solution than                Furthermore, we also train the network using RMSElog
+the other two methods, and our ordinal regression network             on discrete depth values obtained by SID, and report the re-
+achieves the best performance. There is an obvious gap be-            sults in Tab. 6. We can see that MSE-SID performs slightly
+tween approaches where depth is discretized by SID and                better than MSE, which demonstrates that quantization er-
+UD, respectively. Besides, when replacing our ordinal re-             rors are nearly ignorable in depth estimation. The benefits
+gression loss by an advantage regression loss (i.e. BerHu),           of discretization through the use of ordinal regression losses
+our DORN still obtain much higher scores. Thus, we can                far exceeds the cost of depth discretization.
+                                                higher is better                                                                     lower is better
+        Variant        Iteration
+                                     δ < 1.25     δ < 1.252      δ < 1.253                          Abs Rel                       Squa Rel     RMSE                                 RMSElog
+      MSE                   1M         0.864        0.969          0.991                             0.109                         0.527       3.660                                 0.164
+    MSE-SID                0.6M        0.865        0.970          0.992                             0.108                         0.520       3.636                                 0.163
+    MCC-UD                 0.3M        0.892        0.970          0.988                             0.093                         0.474       3.438                                 0.155
+   MCC-SID                 0.3M        0.906        0.976          0.991                             0.084                         0.417       3.201                                 0.142
+   DORN-UD                 0.3M        0.900        0.973          0.991                             0.091                         0.452       3.339                                 0.148
+   DORN-SID                0.3M        0.915        0.980          0.993                             0.081                         0.376       3.056                                 0.132
+     berHu†                0.6M        0.909        0.978          0.992                             0.086                         0.385       3.365                                 0.136
+    DORN†                  0.3M        0.932        0.984          0.994                             0.072                         0.307       2.727                                 0.120
+
+Table 6: Depth Discretization and Ordinal Regression. MSE: mean squared error in log space. MCC: multi-class classification.
+DORN: proposed ordinal regression. Note that training by MSE for 1M iterations only slightly improve the performance compared with
+0.5M (about 0.001 on δ < 1.25). berHu: the reverse Huber loss. † : ResNet based model.
+
+
+4.2.2    Full-image Encoder
+                                                                                     0.93                                                             3.4
+
+                                                                                                                                                     3.35
+                                                                                    0.925
+                                                                                                                                                      3.3
+                                                                                     0.92
+                                                                                                                                                     3.25
+                                                                                    0.915
+
+          Variant           δ < 1.25 Abs Rel RMSElog   Params
+                                                                                                                                                      3.2
+
+
+
+
+                                                                     delta < 1.25
+
+
+
+
+                                                                                                                                              RMSE
+                                                                                     0.91                                                            3.15
+
+  w/o full-image encoder      0.906   0.092   0.143      0M                         0.905
+                                                                                                                                                      3.1
+
+
+        fc-fashion            0.910   0.085   0.137    753M                           0.9
+                                                                                                                                                     3.05
+
+
+
+       our encoder            0.915   0.081   0.132     51M
+                                                                                                                                                        3
+                                                                                    0.895
+                                                                                                                                                     2.95
+
+                                                                                     0.89                                                             2.9
+                                                                                            0   1   2   3       4       5     6   7   8   9                 0   1   2   3       4       5     6   7   8   9
+
+Table 7: Full-image Encoder. Parameters here is computed by                                                 Intervals (*20)                                                 Intervals (*20)
+
+
+
+some common settings in Eigen [12] and our DORN.
+                                                                    Figure 7: Performance Ranging Different Intervals via SID.
+                                                                    Left: accuracy on δ < 1.25. Right: evaluation errors on RMSE.
+    From Tab. 7, a full-image encoder is important to further
+boost the performance. Our full-image encoder yields a lit-
+tle higher scores than fc type encoders [2, 12, 11, 37, 30],
+but significantly reduce the number of parameters. For              large quantization error, while too many depth intervals lose
+example, we set C to 512 (VGG), C to 512, m to 2048                 the advantage of discretization.
+(Eigen [12, 11]), and k to 4 in Fig. 3. Because of limited
+computation resources, when implementing the fc-fashion             5. Conclusion
+encoder, we downsampled the resolution of F using the
+stride of 3, and upsampled F to the required resolution.                In this paper, we have developed an deep ordinal re-
+With an input image of size 385 × 513, h and w will                 gression network (DORN) for monocular depth estimation
+be 49 and 65 respectively in our network. The number                MDE from a single image, consisting of a clean CNN ar-
+of parameters in f c-fashion encoder and our encoder is             chitecture and some effective strategies for network opti-
+9 ∗ m ∗ w ∗ h ∗ C + m + 9 ∗ w ∗ h ∗ C ∗ m ≈ 753M , and
+1                        2  1
+                                                                    mization. Our method is motivated by two aspects: (i) to
+is C ∗ 4 ∗ 4 ∗ C + C ∗ C ≈ 51M , respectively. From the
+       w    h
+                                                                    obtain high-resolution depth map, previous depth estima-
+experimental results and parameter analysis, it can be seen         tion networks require incorporating multi-scale features as
+that our full-image encoder performs better while requires          well as full-image features in a complex architecture, which
+less computational resources.                                       complicates network training and largely increases the com-
+                                                                    putational cost; (ii) training a regression network for depth
+4.2.3    How Many Intervals                                         estimation suffers from slow convergence and unsatisfac-
+                                                                    tory local solutions. To this end, we first introduced a sim-
+To illustrate the sensitivity to the number of intervals, we        ple depth estimation network which takes advantage of di-
+discretizing depth into various number of intervals via SID.        lated convolution technique and a novel full-image encoder
+As shown in Fig. 7, with a range of 40 to 120 intervals, our        to directly obtain a high-resolution depth map. Moreover,
+DORN has a score in [0.908, 0.915] regarding δ < 1.25, and          an effective depth discretization strategy and an ordinal re-
+a score in [3.056, 3.125] in terms of RMSE, and is thereby          gression training loss were intergrated to improve the train-
+robust to a long range of depth interval numbers. We can            ing of our network so as to largely increase the estimation
+also see that neither too few nor too many depth intervals are      accuracy. The proposed method achieves the state-of-the-
+rational for depth estimation: too few depth intervals cause        art performance on the KITTI, ScanNet, Make3D and NYU
+Depth v2 datasets. In the future, we will investigate new          [13] J. Flynn, I. Neulander, J. Philbin, and N. Snavely. Deep-
+approximations to depth and extend our framework to other               stereo: Learning to predict new views from the world’s im-
+dense prediction problems.                                              agery. In CVPR, 2016. 2
+                                                                   [14] D. Forsyth and J. Ponce. Computer Vision: a Modern Ap-
+6. Acknowledgement                                                      proach. Prentice Hall, 2002. 2
+                                                                   [15] E. Frank and M. Hall. A simple approach to ordinal classifi-
+    This research was supported by Australian Research                  cation. ECML, 2001. 3
+Council Projects FL-170100117 and DP-180103424. This               [16] R. Furukawa, R. Sagawa, and H. Kawasaki. Depth estima-
+work was partially supported by SAP SE and CNRS INS2I-                  tion using structured light flow – analysis of projected pattern
+JCJC-INVISANA. We gratefully acknowledge the support                    flow on an object’s surface. In ICCV, 2017. 2
+of NVIDIA Corporation with the donation of the Titan X             [17] R. Garg, G. Carneiro, and I. Reid. Unsupervised cnn for
+Pascal GPU used for this research. This research was par-               single view depth estimation: Geometry to the rescue. In
+tially supported by research grant from Pfizer titled ”De-              ECCV, 2016. 2, 3, 7
+veloping Statistical Method to Jointly Model Genotype and          [18] A. Geiger, P. Lenz, C. Stiller, and R. Urtasun. Vision meets
+                                                                        robotics: The kitti dataset. IJRR, 2013. 1, 2, 5
+High Dimensional Imaging Endophenotype.” We were also
+                                                                   [19] C. Godard, O. Mac Aodha, and G. J. Brostow. Unsuper-
+grateful for the computational resources provided by Pitts-
+                                                                        vised monocular depth estimation with left-right consistency.
+burgh Super Computing grant number TG-ASC170024.
+                                                                        CVPR, 2017. 5, 7
+                                                                   [20] R. A. Güler, G. Trigeorgis, E. Antonakos, P. Snape,
+References                                                              S. Zafeiriou, and I. Kokkinos. Densereg: Fully convolutional
+ [1] M. H. Baig and L. Torresani. Coupled depth learning. In            dense shape regression in-the-wild. In CVPR, 2016. 2
+     WACV, 2016. 2                                                 [21] H. Ha, S. Im, J. Park, H.-G. Jeon, and I. S. Kweon. High-
+ [2] A. Chakrabarti, J. Shao, and G. Shakhnarovich. Depth from          quality depth from uncalibrated small motion clip. In CVPR,
+     a single image by harmonizing overcomplete local network           2016. 1
+     predictions. In NIPS, 2016. 2, 3, 4, 7                        [22] C. Hane, L. Ladicky, and M. Pollefeys. Direction matters:
+ [3] A. Chang, A. Dai, T. Funkhouser, M. Halber, M. Niessner,           Depth estimation with a surface normal classifier. In CVPR,
+     M. Savva, S. Song, A. Zeng, and Y. Zhang. Matterport3D:            2015. 2
+     Learning from RGB-D data in indoor environments. 3DV,         [23] F. E. Harrell Jr. Regression modeling strategies: with appli-
+     2017. 1                                                            cations to linear models, logistic and ordinal regression, and
+ [4] L.-C. Chen, G. Papandreou, I. Kokkinos, K. Murphy, and             survival analysis. Springer, 2015. 3
+     A. L. Yuille. Semantic image segmentation with deep con-      [24] K. He, X. Zhang, S. Ren, and J. Sun. Deep residual learning
+     volutional nets and fully connected crfs. In ICLR, 2015. 2,        for image recognition. In CVPR, 2016. 2, 5
+     3                                                             [25] R. Herbrich, T. Graepel, and K. Obermayer. Support vector
+ [5] L.-C. Chen, G. Papandreou, I. Kokkinos, K. Murphy, and             learning for ordinal regression. 1999. 3
+     A. L. Yuille. Deeplab: Semantic image segmentation with       [26] D. Hoiem, A. A. Efros, and M. Hebert. Recovering surface
+     deep convolutional nets, atrous convolution, and fully con-        layout from an image. IJCV, 75(1):151–172, 2007. 1, 2
+     nected crfs. arXiv:1606.00915, 2016. 3                        [27] Y. Jia, E. Shelhamer, J. Donahue, S. Karayev, J. Long, R. Gir-
+ [6] L.-C. Chen, G. Papandreou, F. Schroff, and H. Adam. Re-            shick, S. Guadarrama, and T. Darrell. Caffe: Convolu-
+     thinking atrous convolution for semantic image segmenta-           tional architecture for fast feature embedding. arXiv preprint
+     tion. arXiv preprint arXiv:1706.05587, 2017. 2, 3                  arXiv:1408.5093, 2014. 5
+ [7] W. Chen, Z. Fu, D. Yang, and J. Deng. Single-image depth      [28] K. Karsch, C. Liu, and S. B. Kang. Depth transfer: Depth
+     perception in the wild. In NIPS, 2016. 3                           extraction from video using non-parametric sampling. IEEE
+ [8] S. Choi, D. Min, B. Ham, Y. Kim, C. Oh, and K. Sohn. Depth         TPAMI, 36(11):2144–2158, 2014. 1, 2, 6, 7
+     analogy: Data-driven approach for single image depth es-      [29] A. Kendall and Y. Gal. What uncertainties do we need in
+     timation using gradient samples. IEEE TIP, 24(12):5953–            bayesian deep learning for computer vision? In NIPS, 2017.
+     5966, 2015. 2                                                      2
+ [9] K. Crammer and Y. Singer. Pranking with ranking. In NIPS,     [30] S. Kim, K. Park, K. Sohn, and S. Lin. Unified depth predic-
+     2002. 3                                                            tion and intrinsic image decomposition from a single image
+[10] A. Dai, A. X. Chang, M. Savva, M. Halber, T. Funkhouser,           via joint convolutional neural fields. In ECCV, 2016. 1, 2, 7
+     and M. Nießner. Scannet: Richly-annotated 3d reconstruc-      [31] N. Kong and M. J. Black. Intrinsic depth: Improving depth
+     tions of indoor scenes. In CVPR, 2017. 1, 2, 6                     transfer with intrinsic images. In ICCV, 2015. 1
+[11] D. Eigen and R. Fergus. Predicting depth, surface normals     [32] J. Konrad, M. Wang, P. Ishwar, C. Wu, and D. Mukherjee.
+     and semantic labels with a common multi-scale convolu-             Learning-based, automatic 2d-to-3d image and video con-
+     tional architecture. In ICCV, 2015. 1, 2, 3, 4, 7, 8               version. IEEE TIP, 22(9):3485–3496, 2013. 2
+[12] D. Eigen, C. Puhrsch, and R. Fergus. Depth map prediction     [33] Y. Kuznietsov, J. Stückler, and B. Leibe. Semi-supervised
+     from a single image using a multi-scale deep network. In           deep learning for monocular depth map prediction. CVPR,
+     NIPS, 2014. 2, 3, 4, 5, 6, 7, 8                                    2017. 1, 2, 3, 7
+[34] L. Ladicky, J. Shi, and M. Pollefeys. Pulling things out of      [55] J. Shi, X. Tao, L. Xu, and J. Jia. Break ames room illusion:
+     perspective. In CVPR, 2014. 1, 2, 7                                   depth from general single images. ACM TOG, 34(6):225,
+[35] I. Laina, C. Rupprecht, V. Belagiannis, F. Tombari, and               2015. 2
+     N. Navab. Deeper depth prediction with fully convolutional       [56] K. Simonyan and A. Zisserman. Very deep convolutional
+     residual networks. In 3DV, 2016. 1, 2, 3, 7                           networks for large-scale image recognition. In ICLR, 2015.
+[36] B. Li, C. Shen, Y. Dai, A. van den Hengel, and M. He. Depth           2, 5
+     and surface normal estimation from monocular images using        [57] P. Wang, X. Shen, Z. Lin, S. Cohen, B. Price, and A. Yuille.
+     regression on deep features and hierarchical crfs. In CVPR,           Towards unified depth and semantic prediction from a single
+     2015. 7                                                               image. In CVPR, 2015. 1, 2, 4, 7
+[37] J. Li, R. Klein, and A. Yao. A two-streamed network for          [58] X. Wang, D. Fouhey, and A. Gupta. Designing deep net-
+     estimating fine-scaled depth maps from single rgb images.             works for surface normal estimation. In CVPR, 2015. 2
+     In ICCV, 2017. 2, 7                                              [59] J. Xie, R. Girshick, and A. Farhadi. Deep3d: Fully au-
+[38] X. Li, H. Qin, Y. Wang, Y. Zhang, and Q. Dai. Dept: depth             tomatic 2d-to-3d video conversion with deep convolutional
+     estimation by parameter transfer for single still images. In          neural networks. In ECCV, 2016. 2, 3, 7
+     ACCV, 2014. 2                                                    [60] D. Xu, E. Ricci, W. Ouyang, X. Wang, and N. Sebe. Multi-
+[39] B. Liu, S. Gould, and D. Koller. Single image depth estima-           scale continuous crfs as sequential deep networks for monoc-
+     tion from predicted semantic labels. In CVPR, 2010. 7                 ular depth estimation. In CVPR, 2017. 7
+[40] F. Liu, C. Shen, G. Lin, and I. Reid. Learning depth from sin-   [61] X. You, Q. Li, D. Tao, W. Ou, and M. Gong. Local metric
+     gle monocular images using deep convolutional neural fields.          learning for exemplar-based object detection. IEEE TCSVT,
+     IEEE TPAMI, 38(10):2024–2039, 2016. 1, 2, 3, 5, 6, 7                  24(8):1265–1276, 2014. 2
+[41] M. Liu, M. Salzmann, and X. He. Discrete-continuous depth        [62] F. Yu and V. Koltun. Multi-scale context aggregation by di-
+     estimation from a single image. In CVPR, 2014. 2, 7                   lated convolutions. In ICLR, 2016. 2, 3
+[42] T. Narihira, M. Maire, and S. X. Yu. Learning lightness from     [63] Z. Zhang, A. G. Schwing, S. Fidler, and R. Urtasun. Monoc-
+     human judgement on relative reflectance. In CVPR, 2015. 2             ular object instance segmentation and depth ordering with
+[43] P. K. Nathan Silberman, Derek Hoiem and R. Fergus. Indoor             cnns. In ICCV, 2015. 2
+     segmentation and support inference from rgbd images. In          [64] H. Zhao, J. Shi, X. Qi, X. Wang, and J. Jia. Pyramid scene
+     ECCV, 2012. 1, 2, 5, 6                                                parsing network. In CVPR, 2017. 2, 3
+[44] Z. Niu, M. Zhou, L. Wang, X. Gao, and G. Hua. Ordinal            [65] W. Zhuo, M. Salzmann, X. He, and M. Liu. Indoor scene
+     regression with multiple output cnn for age estimation. In            structure analysis for single image depth estimation. In
+     CVPR, 2016. 3                                                         CVPR, 2015. 2
+[45] A. Oliva and A. Torralba. Modeling the shape of the scene:       [66] D. Zoran, P. Isola, D. Krishnan, and W. T. Freeman. Learning
+     A holistic representation of the spatial envelope. IJCV,              ordinal relationships for mid-level vision. In ICCV, 2015. 3
+     42(3):145–175, 2001. 2
+[46] A. Rajagopalan, S. Chaudhuri, and U. Mudenagudi. Depth
+     estimation and image restoration using defocused stereo
+     pairs. IEEE TPAMI, 26(11):1521–1525, 2004. 1
+[47] R. Ranftl, V. Vineet, Q. Chen, and V. Koltun. Dense monoc-
+     ular depth estimation in complex dynamic scenes. In CVPR,
+     2016. 2
+[48] A. Roy and S. Todorovic. Monocular depth estimation using
+     neural regression forest. In CVPR, 2016. 1, 2, 7
+[49] O. Russakovsky, J. Deng, H. Su, J. Krause, S. Satheesh,
+     S. Ma, Z. Huang, A. Karpathy, A. Khosla, M. Bernstein,
+     A. C. Berg, and L. Fei-Fei. ImageNet Large Scale Visual
+     Recognition Challenge. IJCV, 115(3):211–252, 2015. 5
+[50] A. Saxena, S. H. Chung, and A. Y. Ng. Learning depth from
+     single monocular images. In NIPS, 2006. 1, 2, 5, 6
+[51] A. Saxena, M. Sun, and A. Y. Ng. Make3d: Learning 3d
+     scene structure from a single still image. IEEE TPAMI,
+     31(5):824–840, 2009. 1, 2, 5, 6, 7
+[52] D. Scharstein and R. Szeliski. A taxonomy and evaluation of
+     dense two-frame stereo correspondence algorithms. IJCV,
+     47(1-3):7–42, 2002. 2
+[53] A. Shashua and A. Levin. Ranking with large margin princi-
+     ple: Two approaches. In NIPS, 2003. 3
+[54] E. Shelhamer, J. T. Barron, and T. Darrell. Scene intrinsics
+     and depth from a single image. In ICCV Workshop, 2015. 2
+

@@ -1,0 +1,40 @@
+dataset:
+  modalities:
+  - rgb
+  - depth
+  name: Generic_Indoor
+  splits:
+  - train
+  - valid
+  - test
+  type: indoor_depth
+evaluation:
+  depth_cap: 10.0
+  metrics:
+  - mae
+  - rmse
+  - abs_rel
+  - sq_rel
+  min_depth: 0.1
+inference:
+  batch_size: 1
+  depth_range:
+  - 0
+  - 10
+  depth_scale: 255.0
+  output_format: png
+model:
+  architecture: VGG16
+  deploy_path: models/NYUV2/deploy.prototxt
+  model_path: models/NYUV2/cvpr_nyuv2.caffemodel
+  pretrained: true
+  type: DORN_NYUV2
+preprocessing:
+  pixel_means:
+  - 103.0626
+  - 115.9029
+  - 123.1516
+  resize_method: linear
+  target_size:
+  - 353
+  - 257

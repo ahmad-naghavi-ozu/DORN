@@ -1,0 +1,53 @@
+# Model files and checkpoints
+*.caffemodel
+*.pth
+*.pt
+*.ckpt
+*.weights
+*.h5
+*.hdf5
+
+# Large datasets
+data/*/
+!data/KITTI/demo_*.png
+!data/NYUV2/demo_*.png
+
+# Results and outputs
+results/
+test_results/
+result/
+
+# Compiled Caffe
+caffe/build/
+caffe/.build_debug/
+caffe/.build_release/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Environment files
+.env
+.venv
+env/
+venv/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Large temporary files
+*.tmp
+*.temp
+*.log
